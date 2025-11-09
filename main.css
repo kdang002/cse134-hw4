@@ -233,6 +233,13 @@ main {
     }
 }
 
+fieldset > legend {
+        background-color: black;
+        color: white;
+        padding: 3px 6px;
+}
+
+
 .two-column-layout {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -354,7 +361,7 @@ main {
 }
 
 button:hover {
-    background-color: color(srgb 83.1% 26.7% 26.7%);
+    background-color: rgb(213, 167, 73);
 }
 
 .blow-up:active {
