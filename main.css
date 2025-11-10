@@ -394,6 +394,112 @@ review-box {
 }
 
 /* ===========================
+    FORM
+=========================== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: #fff;
+    padding: 0.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+
+    label {
+        display: block;
+        font-weight: 300;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Comments stay neutral */
+    textarea {
+        border-color: #ccc;
+    }
+
+
+    fieldset {
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 1rem;
+    }
+
+
+    input, textarea, select, button {
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 1rem;
+    }
+
+    /* Highlight input INVALIDATION */
+    input:invalid, select:invalid {
+        border: 2px solid #dc2626; 
+        box-shadow: 0 0 5px rgba(220, 38, 38, 0.6); 
+        border-width: 2px;
+    }
+
+    /* Highlight input VALIDATION */
+    input:valid, select:valid {
+        border: 2px solid #16a34a;
+        box-shadow: 0 0 5px rgba(22, 163, 74, 0.4);
+        border-width: 2px;
+    }
+
+    button {
+        background-color: #2563eb;
+        color: #fff;
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+    }
+
+    button:hover,
+    button:focus-visible {
+        background-color: #1e40af;
+    }
+
+    /* Buttons */
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    output {
+        display: block;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    #info {
+        color: #16a34a;
+    }
+
+    /* Focus styles (keyboard navigation) */
+    input:focus, textarea:focus,
+    select:focus, button:focus {
+        outline: 3px solid #2563eb;
+        outline-offset: 2px;
+    }
+
+    /* Outputs */
+    .error {
+        color: #b91c1c;
+        font-size: 0.9rem;
+    }
+
+    .info {
+        color: #15803d;
+        font-size: 0.9rem;
+    }    
+}
+
+
+/* ===========================
     MODERN CSS :has() and <pop-over>
 =========================== */
 

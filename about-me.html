@@ -116,7 +116,7 @@
 
                 <span>
                     <review-box>
-                        <form action="#" method="post">
+                        <form action="https://httpbin.org/post" method="post">
                             <fieldset>
                                 <legend>Movie Feedback</legend>
 
@@ -133,14 +133,10 @@
 
                                 <!-- Disable due to having no backend DB -->
                                 <p>
-                                <button type="submit" value="Submit" disabled>Submit</button>
+                                <button type="submit" value="Submit">Submit</button>
                                 </p>
                             </fieldset>
                         </form>
-
-                        <!-- Will be more helpful when CSS and JS is being used -->
-                        <label for="file">Uploading progress:</label>
-                        <progress id="file" value="32" max="100">0%</progress>
                     </review-box>
 
                 </span>
