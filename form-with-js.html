@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+
+    <!-- HEAD BEGINS -->
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+		<title>CSE 134B - VyDang</title>
+
+        <link rel="stylesheet" href="main.css" media="screen">
+        <link rel="icon" type="image/x-icon" href="resources\images\vkd.ico">
+
+        <!-- Importing Custom Porsche fonts directly from porsche.com -->
+        <link rel="preconnect" href="https://cdn.ui.porsche.com" crossorigin>
+        <link rel="dns-prefetch" href="https://cdn.ui.porsche.com" crossorigin>
+                
+	</head>
+
+    <body>
+		<header class="navbar">
+            <!-- Pure CSS Hamburger Menu (Mobile Only) -->
+            <input type="checkbox" id="menu-toggle" aria-label="Toggle mobile menu">
+            <label for="menu-toggle" class="hamburger-label" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Desktop Dropdown Menu -->
+            <nav class="dropdown">
+                <button type="button" class="dropbtn">Menu</button>
+                <section class="dropdown-content">
+                    <a href="about-me.html">About Me</a>
+                    <a href="hobby.html">My Hobby</a>
+                </section>
+            </nav>
+
+            <h1 class="logo">Vy Kiet Dang</h1>
+
+            <!-- Mobile Menu (Controlled by CSS) -->
+            <nav class="mobile-menu">
+                <a href="about-me.html">About Me</a>
+                <a href="hobby.html">My Hobby</a>
+            </nav>
+		</header>
+
+        <main>
+            <h1>Contact Us</h1>
+            <form id="contactForm" action="https://httpbin.org/post" method="POST">
+                <fieldset>
+                    <legend>Fill in Your Info</legend>
+
+                    <!-- Hidden field to detect bots -->
+                    <input type="hidden" name="possible_bot" value="true">
+
+                    <!-- NAME ; '*' inside of span aria-hidden="true" so that screen reader's won't annount it -->
+                    <label for="name">Full Name <span aria-hidden="true">*</span></label>
+                    <input type="text" id="name" name="name" 
+                    pattern="[A-Za-z\s]+" maxlength="50" required
+                    placeholder="Your full name"
+                    title="Alphabet characters only, up to 50 characters.">
+                    <output class="error" id="name-error"></output>
+
+                    <!-- EMAIL -->
+                    <label for="email">Email Address <span aria-hidden="true">*</span></label>
+                    <input type="email" id="email" name="email"
+                        placeholder="example@domain.com" required>
+                    <output class="error" id="email-error"></output>
+
+                    <!-- SUBJECT -->
+                    <label for="subject">Subject <span aria-hidden="true">*</span></label>
+                    <input type="text" id="subject" name="subject"
+                        pattern="[A-Za-z0-9\s.,!?'\-]+"
+                        maxlength="80"
+                        required
+                        placeholder="What's this about?">
+                    <output class="error" id="subject-error"></output>
+
+                    <!-- COMMENTS -->
+                    <label for="comments">Comments</label>
+                    <textarea id="comments" name="comments"
+                            rows="5" maxlength="250"
+                            placeholder="Up to 250 characters."></textarea>
+                    <output class="info" id="comment-info" ></output>
+
+                    <!-- CONTACT METHOD -->
+                    <label for="contact-method">Preferred Contact Method <span aria-hidden="true">*</span></label>
+                    <select id="contact-method" name="contact_method" placeholder="Select One" required>
+                        <option value="email">Email</option>
+                        <option value="phone">Phone</option>
+                    </select>
+                    <output class="error" id="contact-method-error"></output>
+
+                    <!-- PHONE  -->
+                    <label for="phone">Phone (optional)</label>
+                    <input type="tel" id="phone" name="phone"
+                        pattern="[0-9]{10}"
+                        placeholder="1234567890"
+                        title="Enter a 10-digit number (digits only).">
+                    <output class="error" id="phone-error"></output>
+
+                    <!-- Custom message area -->
+                    <output id="info" name="info"></output>
+
+
+                    <div class="button-group">
+                        <button type="submit">Submit</button>
+                        <button type="reset">Reset</button>
+                    </div>
+                </fieldset>
+            </form>
+        </main>
+
+        <!-- FOOTER BEGINS -->
+		<footer>
+			<div>
+                <p>&copy; <span id="year"></span> Vy Kiet Dang. All rights reserved.</p>
+			</div>
+		</footer>
+        <!-- FOOTER ENDS -->
+
+        <!-- ===========================
+            SCRIPT
+        ===========================  -->
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year in footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            const form = document.getElementById('contactForm');
+            if (!form) return; // If there form cannot be found, just return. 
+
+            const fields = [
+            { id: 'name', pattern: /^[A-Za-z\s]+$/, message: 'Only letters and spaces allowed.' },
+            { id: 'email', pattern: /^[^@\s]+@[^@\s]+\.[^@\s]+$/, message: 'Enter a valid email address.' },
+            { id: 'subject', pattern: /^[A-Za-z0-9\s.,!?'-]+$/, message: 'Letters, numbers, and punctuation only.' },
+            { id: 'phone', pattern: /^[0-9]{10}$/, message: 'Phone must be exactly 10 digits.' }
+            ];
+
+            // This block adds live input validation for all form fields
+            // @param {Object[]} fields - Array of field config objects (id, pattern, message)
+            // @return {void}
+            fields.forEach(({ id, pattern, message }) => {
+                const input = document.getElementById(id);
+                const errorOutput = document.getElementById(id + '-error');
+
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    if (value && !pattern.test(value)) {
+                        e.target.classList.add('flash');
+                        e.target.setCustomValidity(message);
+                        errorOutput.textContent = message;
+                        fadeOut(errorOutput);
+                    } 
+                    else {
+                        e.target.setCustomValidity('');
+                        errorOutput.textContent = '';
+                    }
+
+                    setTimeout(() => e.target.classList.remove('flash'), 500);
+                });
+            });
+
+            // This block handles form submission and displays validation messages
+            // @param {SubmitEvent} e - The submit event from the form
+            // @return {void}
+            form.addEventListener('submit', (e) => {
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                fields.forEach(({ id }) => {
+                    const input = document.getElementById(id);
+                    const errorOutput = document.getElementById(id + '-error');
+                    if (!input.checkValidity()) {
+                        input.reportValidity();
+                        errorOutput.textContent = input.validationMessage;
+                    }
+                });
+            }
+            });
+
+            // This function fades out error messages after a delay
+            // @param {HTMLElement} element - The error message element to fade
+            // @return {void}
+            function fadeOut(element) {
+                setTimeout(() => element.classList.add('fade-out'), 1500);
+                setTimeout(() => {
+                    element.textContent = '';
+                    element.classList.remove('fade-out');
+                }, 2500);
+            }
+
+            // --- Character counter for comments textarea ---
+            const comments = document.getElementById('comments');
+            const commentInfo = document.getElementById('comment-info');
+            const maxLength = comments.getAttribute('maxlength');
+
+            // This function updates the character counter and styles as user types
+            // @param {Event} none (uses outer scope event listener on textarea)
+            // @return {void}
+            comments.addEventListener('input', () => {
+                const remaining = maxLength - comments.value.length;
+                commentInfo.textContent = `${remaining} characters remaining`;
+
+                // Reset classes
+                commentInfo.classList.remove('warn', 'error');
+                comments.classList.remove('warn', 'error');
+
+                // Apply warning or error styling near limit
+                if (remaining <= 0) {
+                    commentInfo.classList.add('error');
+                    comments.classList.add('error');
+                    comments.setCustomValidity('You have reached the maximum character limit!');
+                } 
+                else {
+                    comments.setCustomValidity('');
+                }
+            });
+        });
+        </script>
+
+		<!-- JS Disable fail safe, learned it the hard way from 110 -->
+        <noscript>
+            <p>Hi, you are having your JavaScript turn off. This will affect some components of the website.</p>
+        </noscript>
+
+
+
+        
+    </body>
+</html>

@@ -396,6 +396,7 @@ review-box {
 /* ===========================
     FORM
 =========================== */
+
 form {
     display: flex;
     flex-direction: column;
@@ -413,7 +414,7 @@ form {
         margin-bottom: 0.25rem;
     }
 
-    /* Comments stay neutral */
+
     textarea {
         border-color: #ccc;
     }
@@ -496,6 +497,48 @@ form {
         color: #15803d;
         font-size: 0.9rem;
     }    
+
+    /* Flash animation for illegal input */
+    @keyframes flash {
+      0% { background-color: #f8d7da; }
+      100% { background-color: white; }
+    }
+    
+    .flash {
+      animation: flash 0.5s;
+    }
+    
+    .error {
+      color: red;
+      font-size: 0.9em;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+    
+    .fade-out {
+      opacity: 0;
+    }
+
+
+    /* Character counter styles */
+    #comment-info {
+        display: block;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        color: #16a34a; /* green by default */
+        transition: color 0.3s ease;
+    }
+
+    #comment-info.error {
+        color: #dc2626; /* red for over limit */
+    }
+
+    /* Optional field highlight for visual feedback */
+    textarea.error {
+        border: 2px solid #dc2626;
+        box-shadow: 0 0 5px rgba(220, 38, 38, 0.6);
+    }
+
 }
 
 
