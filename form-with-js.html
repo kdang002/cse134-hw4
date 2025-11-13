@@ -47,7 +47,7 @@
 
         <main>
             <h1>Contact Us</h1>
-            <form id="contactForm" action="https://httpbin.org/post" method="POST">
+            <form id="contactForm" action="https://httpbin.org/post" method="POST" novalidate>
                 <fieldset>
                     <legend>Fill in Your Info</legend>
 
@@ -129,59 +129,49 @@
             document.getElementById('year').textContent = new Date().getFullYear();
 
             const form = document.getElementById('contactForm');
-            if (!form) return; // If there form cannot be found, just return. 
+            if (!form) return; // If the form cannot be found, just return. 
 
+            // Form fields value
             const fields = [
             { id: 'name', pattern: /^[A-Za-z\s]+$/, message: 'Only letters and spaces allowed.' },
             { id: 'email', pattern: /^[^@\s]+@[^@\s]+\.[^@\s]+$/, message: 'Enter a valid email address.' },
             { id: 'subject', pattern: /^[A-Za-z0-9\s.,!?'-]+$/, message: 'Letters, numbers, and punctuation only.' },
-            { id: 'phone', pattern: /^[0-9]{10}$/, message: 'Phone must be exactly 10 digits.' }
             ];
 
-            // This block adds live input validation for all form fields
-            // @param {Object[]} fields - Array of field config objects (id, pattern, message)
+            // Global error log array
+            let form_errors = [];
+
+
+            // ----------------------------------------------------
+            // This function validates input fields live and displays temporary messages
+            // @param {Event} e - Input event from the field
+            // @param {RegExp} pattern - The allowed pattern for the field
+            // @param {String} message - Custom error message
             // @return {void}
-            fields.forEach(({ id, pattern, message }) => {
-                const input = document.getElementById(id);
-                const errorOutput = document.getElementById(id + '-error');
+            // ----------------------------------------------------
+            function handleInputValidation(e, pattern, message) {
+                const input = e.target;
+                const errorOutput = document.getElementById(input.id + '-error');
+                const value = input.value;
 
-                input.addEventListener('input', (e) => {
-                    const value = e.target.value;
-                    if (value && !pattern.test(value)) {
-                        e.target.classList.add('flash');
-                        e.target.setCustomValidity(message);
-                        errorOutput.textContent = message;
-                        fadeOut(errorOutput);
-                    } 
-                    else {
-                        e.target.setCustomValidity('');
-                        errorOutput.textContent = '';
-                    }
+                if (value && !pattern.test(value)) {
+                    input.classList.add('flash');
+                    input.setCustomValidity(message);
+                    errorOutput.textContent = message;
+                    fadeOut(errorOutput);
+                } else {
+                    input.setCustomValidity('');
+                    errorOutput.textContent = '';
+                }
 
-                    setTimeout(() => e.target.classList.remove('flash'), 500);
-                });
-            });
-
-            // This block handles form submission and displays validation messages
-            // @param {SubmitEvent} e - The submit event from the form
-            // @return {void}
-            form.addEventListener('submit', (e) => {
-            if (!form.checkValidity()) {
-                e.preventDefault();
-                fields.forEach(({ id }) => {
-                    const input = document.getElementById(id);
-                    const errorOutput = document.getElementById(id + '-error');
-                    if (!input.checkValidity()) {
-                        input.reportValidity();
-                        errorOutput.textContent = input.validationMessage;
-                    }
-                });
+                setTimeout(() => input.classList.remove('flash'), 500);
             }
-            });
 
-            // This function fades out error messages after a delay
+            // ----------------------------------------------------
+            // This function fades out error messages after a short delay
             // @param {HTMLElement} element - The error message element to fade
             // @return {void}
+            // ----------------------------------------------------
             function fadeOut(element) {
                 setTimeout(() => element.classList.add('fade-out'), 1500);
                 setTimeout(() => {
@@ -190,16 +180,135 @@
                 }, 2500);
             }
 
-            // --- Character counter for comments textarea ---
-            const comments = document.getElementById('comments');
-            const commentInfo = document.getElementById('comment-info');
-            const maxLength = comments.getAttribute('maxlength');
-
-            // This function updates the character counter and styles as user types
-            // @param {Event} none (uses outer scope event listener on textarea)
+            // ----------------------------------------------------
+            // This function handles form submission and logs all validation errors
+            // @param {SubmitEvent} e - The submit event from the form
             // @return {void}
-            comments.addEventListener('input', () => {
+            // ----------------------------------------------------
+            function handleFormSubmit(e) {
+                e.preventDefault();
+                
+                let currentErrors = []; // Errors found in THIS submission attempt
+
+                // Validate name, email, subject (pattern + required)
+                fields.forEach(({ id, pattern, message }) => {
+                    const input = document.getElementById(id);
+                    const errorOutput = document.getElementById(id + '-error');
+                    const value = input.value.trim();
+
+                    // Check if empty (required field)
+                    if (!value) {
+                        const error = {
+                            field: id,
+                            value: value,
+                            message: 'This field is required.',
+                        };
+                        currentErrors.push(error);
+                        errorOutput.textContent = 'This field is required.';
+                        input.classList.add('flash');
+                    }
+                    // Check pattern if value exists
+                    else if (!pattern.test(value)) {
+                        const error = {
+                            field: id,
+                            value: value,
+                            message: message,
+                        };
+                        currentErrors.push(error);
+                        errorOutput.textContent = message;
+                        input.classList.add('flash');
+                    }
+                });
+
+                // Validate contact method (required)
+                const contactMethod = document.getElementById('contact-method');
+                const contactMethodError = document.getElementById('contact-method-error');
+                if (!contactMethod.value) {
+                    const error = {
+                        field: 'contact-method',
+                        value: '',
+                        message: 'Please select a contact method.',
+                    };
+                    currentErrors.push(error);
+                    contactMethodError.textContent = 'Please select a contact method.';
+                    contactMethod.classList.add('flash');
+                }
+
+                // Validate phone (optional, but must match pattern if provided)
+                const phone = document.getElementById('phone');
+                const phoneError = document.getElementById('phone-error');
+                const phonePattern = /^[0-9]{10}$/;
+                if (phone.value && !phonePattern.test(phone.value)) {
+                    const error = {
+                        field: 'phone',
+                        value: phone.value,
+                        message: 'Enter a 10-digit number (digits only).',
+                    };
+                    currentErrors.push(error);
+                    phoneError.textContent = 'Enter a 10-digit number (digits only).';
+                    phone.classList.add('flash');
+                }
+
+                // --------------------------------------------------
+                // ACCUMULATE errors into persistent array
+                // --------------------------------------------------
+                if (currentErrors.length > 0) {
+                    // Add current errors to the persistent log
+                    form_errors.push(...currentErrors);
+                    
+                    console.log("=== SUBMISSION ATTEMPT BLOCKED ===");
+                    console.log("Errors in this attempt:", currentErrors.length);
+                    console.log("Current errors:", JSON.stringify(currentErrors, null, 2));
+                    console.log("Total accumulated errors:", form_errors.length);
+                    console.log("All errors so far:", JSON.stringify(form_errors, null, 2));
+                    
+                    // Display message to user
+                    const infoOutput = document.getElementById('info');
+                    if (infoOutput) {
+                        infoOutput.textContent = `Please fix ${currentErrors.length} error(s) before submitting.`;
+                        infoOutput.style.color = 'red';
+                        setTimeout(() => {
+                            infoOutput.textContent = '';
+                        }, 3000);
+                    }
+                    
+                    return; // Block submission
+                }
+
+                // --------------------------------------------------
+                // NO ERRORS - Prepare for successful submission
+                // --------------------------------------------------
+                console.log("=== FORM VALIDATION PASSED ===");
+                console.log("Submitting with complete error history...");
+                console.log("Total mistakes logged:", form_errors.length);
+                console.log("Complete error history:", JSON.stringify(form_errors, null, 2));
+
+                // Create or update hidden field with complete error history
+                let hiddenField = document.getElementById('form-errors');
+                if (!hiddenField) {
+                    hiddenField = document.createElement('input');
+                    hiddenField.type = 'hidden';
+                    hiddenField.id = 'form-errors';
+                    hiddenField.name = 'form-errors';
+                    form.appendChild(hiddenField);
+                }
+                hiddenField.value = JSON.stringify(form_errors);
+
+                // Submit the form with valid data + error history
+                form.submit();
+            }
+
+            // ----------------------------------------------------
+            // This function updates the character counter and warns near the limit
+            // @param {Event} e - Input event from the comments textarea
+            // @return {void}
+            // ----------------------------------------------------
+            function handleCommentInput(e) {
+                const comments = e.target;
+                const commentInfo = document.getElementById('comment-info');
+                const maxLength = comments.getAttribute('maxlength');
                 const remaining = maxLength - comments.value.length;
+
                 commentInfo.textContent = `${remaining} characters remaining`;
 
                 // Reset classes
@@ -211,17 +320,37 @@
                     commentInfo.classList.add('error');
                     comments.classList.add('error');
                     comments.setCustomValidity('You have reached the maximum character limit!');
-                } 
-                else {
+                } else {
                     comments.setCustomValidity('');
                 }
+            }
+
+            // ----------------------------------------------------
+            // Event Listener Callings
+            // ----------------------------------------------------
+
+            // Bind validation listeners
+            fields.forEach(({ id, pattern, message }) => {
+                const input = document.getElementById(id);
+                input.addEventListener('input', (e) => handleInputValidation(e, pattern, message));
             });
+
+            // Bind form submission listener
+            form.addEventListener('submit', handleFormSubmit);
+
+            // Bind character counter listener
+            const comments = document.getElementById('comments');
+            comments.addEventListener('input', handleCommentInput);
+
         });
         </script>
 
 		<!-- JS Disable fail safe, learned it the hard way from 110 -->
         <noscript>
-            <p>Hi, you are having your JavaScript turn off. This will affect some components of the website.</p>
+            <h3>
+                Hi, your JavaScript is turned off. This will affect some components of the website.<br>
+                Please turn back on for the best experience 🥰 - Kiet.
+            </h3>
         </noscript>
 
 
