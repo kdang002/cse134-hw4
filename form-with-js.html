@@ -36,7 +36,10 @@
                 </section>
             </nav>
 
-            <h1 class="logo">Vy Kiet Dang</h1>
+            <a href="index.html" class="logo-link">
+                <h1 class="logo">Vy Kiet Dang</h1>
+            </a>
+            <button id="theme-toggle">Dark Mode</button>
 
             <!-- Mobile Menu (Controlled by CSS) -->
             <nav class="mobile-menu">
@@ -125,12 +128,17 @@
         ===========================  -->
         <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Set current year in footer
+            // ----------------------------------------------------            
+            // SET YEAR FOOTER
+            // ----------------------------------------------------            
             document.getElementById('year').textContent = new Date().getFullYear();
 
             const form = document.getElementById('contactForm');
             if (!form) return; // If the form cannot be found, just return. 
 
+            // ----------------------------------------------------
+            // FORM VALIDATIONS & HANDLING
+            // ----------------------------------------------------            
             // Form fields value
             const fields = [
             { id: 'name', pattern: /^[A-Za-z\s]+$/, message: 'Only letters and spaces allowed.' },
@@ -140,15 +148,12 @@
 
             // Global error log array
             let form_errors = [];
-
-
-            // ----------------------------------------------------
+            
             // This function validates input fields live and displays temporary messages
             // @param {Event} e - Input event from the field
             // @param {RegExp} pattern - The allowed pattern for the field
             // @param {String} message - Custom error message
             // @return {void}
-            // ----------------------------------------------------
             function handleInputValidation(e, pattern, message) {
                 const input = e.target;
                 const errorOutput = document.getElementById(input.id + '-error');
@@ -167,11 +172,10 @@
                 setTimeout(() => input.classList.remove('flash'), 500);
             }
 
-            // ----------------------------------------------------
+            
             // This function fades out error messages after a short delay
             // @param {HTMLElement} element - The error message element to fade
             // @return {void}
-            // ----------------------------------------------------
             function fadeOut(element) {
                 setTimeout(() => element.classList.add('fade-out'), 1500);
                 setTimeout(() => {
@@ -180,11 +184,10 @@
                 }, 2500);
             }
 
-            // ----------------------------------------------------
+            
             // This function handles form submission and logs all validation errors
             // @param {SubmitEvent} e - The submit event from the form
             // @return {void}
-            // ----------------------------------------------------
             function handleFormSubmit(e) {
                 e.preventDefault();
                 
@@ -249,9 +252,7 @@
                     phone.classList.add('flash');
                 }
 
-                // --------------------------------------------------
                 // ACCUMULATE errors into persistent array
-                // --------------------------------------------------
                 if (currentErrors.length > 0) {
                     // Add current errors to the persistent log
                     form_errors.push(...currentErrors);
@@ -275,9 +276,7 @@
                     return; // Block submission
                 }
 
-                // --------------------------------------------------
                 // NO ERRORS - Prepare for successful submission
-                // --------------------------------------------------
                 console.log("=== FORM VALIDATION PASSED ===");
                 console.log("Submitting with complete error history...");
                 console.log("Total mistakes logged:", form_errors.length);
@@ -298,11 +297,10 @@
                 form.submit();
             }
 
-            // ----------------------------------------------------
+            
             // This function updates the character counter and warns near the limit
             // @param {Event} e - Input event from the comments textarea
             // @return {void}
-            // ----------------------------------------------------
             function handleCommentInput(e) {
                 const comments = e.target;
                 const commentInfo = document.getElementById('comment-info');
@@ -325,10 +323,8 @@
                 }
             }
 
-            // ----------------------------------------------------
-            // Event Listener Callings
-            // ----------------------------------------------------
-
+            
+            // Event Listener Callings            
             // Bind validation listeners
             fields.forEach(({ id, pattern, message }) => {
                 const input = document.getElementById(id);
@@ -341,6 +337,48 @@
             // Bind character counter listener
             const comments = document.getElementById('comments');
             comments.addEventListener('input', handleCommentInput);
+
+
+            // ----------------------------------------------------            
+            // DARK MODE
+            // ----------------------------------------------------            
+            // Initializes UI to reflect previously chosen mode.
+            // @return {void}
+            // ----------------------------------------------------
+            const toggleBtn = document.getElementById("theme-toggle");
+            const currentTheme = localStorage.getItem("theme");
+
+            // ----------------------------------------------------
+            // Loads the saved theme (if any) and applies "dark" mode.
+            // Updates button text accordingly.
+            // ----------------------------------------------------
+            if (currentTheme === "dark") {
+                document.body.classList.add("dark");
+                toggleBtn.textContent = "Light Mode";
+            }
+
+            // ----------------------------------------------------
+            // Toggles dark/light mode, saves preference, and updates button label.
+            // @param {MouseEvent} event - Click event on the toggle button
+            // @return {void}
+            // ----------------------------------------------------
+            toggleBtn.addEventListener("click", () => {
+                document.body.classList.toggle("dark");
+
+                // Check whether dark mode is currently active
+                const isDark = document.body.classList.contains("dark");
+
+                // ----------------------------------------------------
+                // Saves the updated theme preference to localStorage.
+                // Ensures theme persists across page reloads.
+                // ----------------------------------------------------
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+
+                // Update button label to indicate the available toggle
+                toggleBtn.textContent = isDark ? "Light Mode" : "Dark Mode";
+            });
+
+
 
         });
         </script>
