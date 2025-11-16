@@ -24,22 +24,86 @@
     --menu-active: #555;
 }
 #theme-toggle {
-    padding: 10px 15px;
-    background: var(--nav-bg);
-    color: var(--text-color);
-    border-radius: 8px;
-    border: 1px solid var(--text-color);
-    cursor: pointer;
-    transition: background 0.3s ease;
-    cursor: pointer;
+    display: none; /* Hide the original button */
+}
+
+/* Switch Container */
+.theme-switch-wrapper {
     order: 3;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     flex-shrink: 0;
 }
-#theme-toggle:hover {
-    opacity: 0.8;
+
+/* Switch Label (clickable area) */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    cursor: pointer;
+}
+
+/* The slider (background track) */
+.theme-switch .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* The circle/knob that slides */
+.theme-switch .slider::before {
+    content: "☀️";
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* When checked (dark mode active) */
+.theme-switch input:checked + .slider {
+    background-color: #4a5568;
+}
+
+.theme-switch input:checked + .slider::before {
+    content: "🌙";
+    transform: translateX(30px);
+}
+
+/* Hover effect */
+.theme-switch:hover .slider {
+    opacity: 0.9;
+}
+
+/* Hide the checkbox input */
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Optional: Add text label */
+.theme-label {
+    color: white;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    display: none; /* Hidden by default, show on larger screens */
 }
 
 

@@ -1,3 +1,8 @@
+<!-- ============================================
+ HOMEWORK 4 FILE, NOT MEANT FOR OFFICIAL DISPLAYS 
+ =============================================-->
+
+
 <!doctype html>
 <html lang="en">
 
@@ -39,7 +44,15 @@
             <a href="index.html" class="logo-link">
                 <h1 class="logo">Vy Kiet Dang</h1>
             </a>
-            <button id="theme-toggle">Dark Mode</button>
+
+            <!-- Dark Light Mode -->
+            <section class="theme-switch-wrapper">
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="theme-label">Dark Mode</span>
+            </section>
 
             <!-- Mobile Menu (Controlled by CSS) -->
             <nav class="mobile-menu">
@@ -124,8 +137,10 @@
         <!-- FOOTER ENDS -->
 
         <!-- ===========================
-            SCRIPT
+            JAVA SCRIPT LINK
         ===========================  -->
+        <script src="darkmode.js"></script>
+
         <script>
         document.addEventListener('DOMContentLoaded', () => {
             // ----------------------------------------------------            
