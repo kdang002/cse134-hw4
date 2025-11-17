@@ -14,6 +14,11 @@
     --strong-color: red;
 }
 
+/* View Transition API, allow for smooth page transition */
+@view-transition {
+    navigation: auto;
+}
+
 /* Dark mode overrides */
 .dark {
     --bg-color: #2d2929;
@@ -169,7 +174,8 @@ p > b, strong, em {
 }
 
 /* ===========================
-    PURE CSS HAMBURGER MENU
+    CSS HAMBURGER MENU 
+    FOR MOBILE DEVICES
 =========================== */
 /* Hide the checkbox */
 #menu-toggle {
